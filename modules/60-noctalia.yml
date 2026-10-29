@@ -1,0 +1,13 @@
+name: noctalia
+type: shell
+sources:
+  - type: file
+    url: https://pkg.noctalia.dev/deb/nickh-archive-keyring.deb
+  - type: file
+    url: https://pkg.noctalia.dev/deb/noctalia-unstable.sources
+commands:
+  - apt-get install -y /sources/noctalia/nickh-archive-keyring/noctalia.deb
+  - install -Dm644 /sources/noctalia/noctalia-unstable/noctalia.sources /etc/apt/sources.list.d/noctalia-unstable.sources
+  - apt-get update
+  - apt-get install -y noctalia
+  - command -v noctalia

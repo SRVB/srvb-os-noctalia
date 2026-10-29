@@ -24,14 +24,17 @@ Es ist keine Variante des Fedora-bootc-basierten
 - Vanilla Tools: `lpkg` zum Sperren und Entsperren der APT-/dpkg-Werkzeuge und
   `cur-gpu` zur Ermittlung der verwendeten GPU und des Treibers
 - Vim als Terminal-Texteditor
+- Noctalia als Desktop-Shell aus dem offiziellen Noctalia-APT-Repository für
+  Debian Unstable, inklusive der vom Paket benötigten Laufzeitabhängigkeiten
 
 ## Geplanter Desktop
 
-- Noctalia als Desktop-Shell
 - Umbriel als Wayland-Compositor
 - Die für den Desktop benötigte Sitzungs-, Portal- und Systemintegration
 
-Diese Komponenten sind im aktuellen Rezept noch nicht eingebunden.
+Umbriel und die Sitzungsintegration sind im aktuellen Rezept noch nicht
+eingebunden. Noctalia ist installiert, wird aber noch nicht automatisch als
+Teil einer Desktop-Sitzung gestartet.
 `lpkg` ist bereits enthalten; eine abschließende Sperre der Paketwerkzeuge
 ist derzeit noch nicht eingerichtet.
 
@@ -42,6 +45,8 @@ Das Image für den Hauptbranch wird unter folgender Adresse veröffentlicht:
 ```text
 ghcr.io/srvb/srvb-os-noctalia:main
 ```
+
+Das Image wird vorerst ausschließlich für `amd64` (x86-64) gebaut.
 
 ## Hinweis zur Verwendung
 

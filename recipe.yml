@@ -3,83 +3,92 @@ id: srvb-os-noctalia # Replace this ID with your image ID
 vibversion: 1.0.7
 
 stages:
-- id: build
-  base: ghcr.io/vanilla-os/core:latest
-  addincludes: true
-  singlelayer: false
-  labels:
-    maintainer: Friesi
-  args:
-    DEBIAN_FRONTEND: noninteractive
-  runs:
-    commands:
-      - echo 'APT::Install-Recommends "1";' > /etc/apt/apt.conf.d/01norecommends
-  cleanup:
-    - /boot/initrd.img*
-    - /tmp/*
-    - /var/cache/apt/pkgcache.bin
-    - /var/cache/debconf
-    - /var/cache/dictionaries-common
-    - /var/cache/fontconfig
-    - /var/cache/ldconfig
-    - /var/cache/man
-    - /var/lib/dbus/machine-id
-    - /var/log/*
+  - id: build
+    base: ghcr.io/vanilla-os/core:latest
+    addincludes: true
+    singlelayer: false
+    labels:
+      maintainer: Friesi
+    args:
+      DEBIAN_FRONTEND: noninteractive
+    runs:
+      commands:
+        - echo 'APT::Install-Recommends "1";' > /etc/apt/apt.conf.d/01norecommends
+    cleanup:
+      - /boot/initrd.img*
+      - /tmp/*
+      - /var/cache/apt/pkgcache.bin
+      - /var/cache/debconf
+      - /var/cache/dictionaries-common
+      - /var/cache/fontconfig
+      - /var/cache/ldconfig
+      - /var/cache/man
+      - /var/lib/dbus/machine-id
+      - /var/log/*
 
-  modules:
-  - name: init-setup
-    type: shell
-    commands:
-    - apt update
-    - apt clean
+    modules:
+      - name: init-setup
+        type: shell
+        commands:
+          - apt update
+          - apt clean
 
-  - name: vanilla-tools
-    type: shell
-    sources:
-      - type: tar
-        url: https://github.com/Vanilla-OS/vanilla-tools/releases/latest/download/vanilla-tools-amd64.tar.gz
-        only-arches: [amd64]
-      - type: tar
-        url: https://github.com/Vanilla-OS/vanilla-tools/releases/latest/download/vanilla-tools-arm64.tar.gz
-        only-arches: [arm64]
-    commands:
-    - mkdir -p /usr/bin
-    - install -Dm755 /sources/vanilla-tools/vanilla-tools*/vanilla-tools/lpkg /usr/bin/lpkg
-    - install -Dm755 /sources/vanilla-tools/vanilla-tools*/vanilla-tools/cur-gpu /usr/bin/cur-gpu
+      - name: vanilla-tools
+        type: shell
+        sources:
+          - type: tar
+            url: https://github.com/Vanilla-OS/vanilla-tools/releases/latest/download/vanilla-tools-amd64.tar.gz
+            only-arches: [amd64]
+          - type: tar
+            url: https://github.com/Vanilla-OS/vanilla-tools/releases/latest/download/vanilla-tools-arm64.tar.gz
+            only-arches: [arm64]
+        commands:
+          - mkdir -p /usr/bin
+          - install -Dm755 /sources/vanilla-tools/vanilla-tools*/vanilla-tools/lpkg /usr/bin/lpkg
+          - install -Dm755 /sources/vanilla-tools/vanilla-tools*/vanilla-tools/cur-gpu /usr/bin/cur-gpu
 
-  - name: example-packages # Sample module using the built-in Apt module to install packages
-    type: apt
-    sources:
-      - packages:
-        - vim
+      - name: example-packages # Sample module using the built-in Apt module to install packages
+        type: apt
+        sources:
+          - packages:
+              - vim
 
-  - name: example-commands # Sample module demonstrating the Shell module with custom commands
-    type: shell
-    commands:
-    - echo Example output
+      - name: example-commands # Sample module demonstrating the Shell module with custom commands
+        type: shell
+        commands:
+          - echo Example output
 
-  - name: example-modules # Sample module demonstrating importing local and remote modules
-    type: includes
-    includes:
-      - modules/50-install-debs.yml # Sample local module present in this repository
-      # - gh:vanilla-os/dev-image:main:modules/00-basics.yml # Sample GitHub remote module in the format: `gh:your-name/your-repo:branch:modules/file.yml`
-      # - https://raw.githubusercontent.com/Vanilla-OS/dev-image/main/modules/05-go.yml # Sample full URL remote module
+      - name: example-modules # Sample module demonstrating importing local and remote modules
+        type: includes
+        includes:
+          - modules/50-install-debs.yml # Sample local module present in this repository
 
-  # Put your custom actions above this comment
+      - name: upstream-desktop-common
+        type: includes
+        includes:
+          - gh:Vanilla-OS/desktop-image:dev:modules/50-laptop-goodies.yml
+          - gh:Vanilla-OS/desktop-image:dev:modules/60-media.yml
+          - gh:Vanilla-OS/desktop-image:dev:modules/80-printers.yml
+          - gh:Vanilla-OS/desktop-image:dev:modules/110-fonts.yml
 
-  - name: set-image-name-abroot
-    type: includes
-    includes:
-      - modules/80-set-image-abroot-config.yml
+      - name: noctalia-desktop
+        type: includes
+        includes:
+          - modules/60-noctalia.yml
 
-  - name: cleanup
-    type: shell
-    commands:
-    - apt-get autoremove -y
-    - apt-get clean
+      - name: set-image-name-abroot
+        type: includes
+        includes:
+          - modules/80-set-image-abroot-config.yml
 
-  - name: cleanup2
-    type: shell
-    commands:
-      - rm -rf /tmp/*
-      - rm -rf /var/tmp/*
+      - name: cleanup
+        type: shell
+        commands:
+          - apt-get autoremove -y
+          - apt-get clean
+
+      - name: cleanup2
+        type: shell
+        commands:
+          - rm -rf /tmp/*
+          - rm -rf /var/tmp/*
