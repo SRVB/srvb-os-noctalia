@@ -1,42 +1,64 @@
-# Custom Vib Image
+# SRVB OS Noctalia
 
-This template repository is a starting point for creating custom [Vib images](https://github.com/Vanilla-OS/Vib) on top of the [official Vanilla OS images](https://images.vanillaos.org) like [desktop image](https://github.com/Vanilla-OS/desktop-image). It contains a basic recipe and an example module to get you started.
+<p align="center">
+  Ein persönliches Vanilla-OS-Image mit dem Ziel eines Wayland-Desktops aus Noctalia und Umbriel.
+</p>
 
-> [!TIP]
-> It is suggested to check the [Vib documentation](https://docs.vanillaos.org/collections/vib) to know more about the recipe format, structure of modules and the supported fields.
+## Überblick
 
-## Getting Started
+SRVB OS Noctalia ist eine persönliche Distribution-Konfiguration auf Basis von
+Vanilla OS Core. Als Desktop sind Noctalia als Shell und Umbriel als
+Wayland-Compositor vorgesehen, ohne den GNOME-Desktop des offiziellen
+Vanilla-OS-Desktop-Images zu übernehmen.
 
-- First, click on the <kbd>Use this template</kbd> button in the top right corner, then from the drop-down menu select <kbd>Create a new repository</kbd>. This would create a new repository with the same files and directories as this repository.
-- Go to **Settings → Actions → General** and ensure "_Allow all actions and reusable workflows_" are enabled.
-- Now, clone the repository to your local machine and let's start customizing your image. You can also use the GitHub online editor if you prefer.
-- Open the `vib-build.yml` workflow file in the `.github/workflows` folder and replace the custom image name with an image name of your choosing in line 14.
-- Open the `recipe.yml` file and replace the image name and ID with your image name and ID in lines 1 and 2.
-- Now, perform your additions and modifications to the recipe as per your requirements.
-- If you just want to install `.deb` files, you can just put them in `includes.container/deb-pkgs` (if you choose this option, make sure to keep the .deb file up to date, it will not be upgraded automatically)
-- Optionally, add your modules to the `modules` directory and add them to the package-modules `includes` in `recipe.yml`.
-- You can check the Actions tab in GitHub to see the build progress of your image.
+Das Projekt befindet sich im Aufbau. Das aktuelle Image enthält bislang die
+Core-Basis und erste Ergänzungen, noch keinen fertig eingerichteten Desktop.
+Es ist keine Variante des Fedora-bootc-basierten
+[SRVB OS](https://github.com/SRVB/srvb-os), sondern verwendet Vanilla OS und ABRoot.
 
-> [!NOTE]
-> It is suggested to add `vib-image` and `vib` tags to your repository for your image to be easily discoverable to others.
+## Enthalten
 
-## Use your custom image
+- Vanilla OS Core als Systembasis
+- ABRoot für image-basierte Systemaktualisierungen und Rollbacks
+- ABRoot-Konfiguration mit Verweis auf das eigene SRVB-OS-Noctalia-Image
+- Vanilla Tools: `lpkg` zum Sperren und Entsperren der APT-/dpkg-Werkzeuge und
+  `cur-gpu` zur Ermittlung der verwendeten GPU und des Treibers
+- Vim als Terminal-Texteditor
 
-If your image is successfully built, you can then point ABRoot to your custom image to use it.
+## Geplanter Desktop
 
-- Edit the configuration file with the command: `abroot config-editor`.
-- Change the "name" entry from something like `vanilla-os/desktop` to `your-github-name/your-image-name` (for example `taukakao/custom`).  [**Note**: All characters must be in lowercase.]
-- Now, Run `abroot upgrade` to switch to your custom image.
+- Noctalia als Desktop-Shell
+- Umbriel als Wayland-Compositor
+- Die für den Desktop benötigte Sitzungs-, Portal- und Systemintegration
 
-## Explore
+Diese Komponenten sind im aktuellen Rezept noch nicht eingebunden.
+`lpkg` ist bereits enthalten; eine abschließende Sperre der Paketwerkzeuge
+ist derzeit noch nicht eingerichtet.
 
-Now, that you are aware of the basics, let's explore the files and directories present in this repository:
+## Image
 
-- `.github/workflows/vib-build.yml`: This file contains the GitHub Actions workflow to check for updates to the base image and build the Vib image on push and pull requests.
-  - It uses the [`vib-gh-action`](https://github.com/Vanilla-OS/vib-gh-action) to build the recipe and upload it as an artifact. The generated artifact is then built using Docker's actions and pushed to GHCR (**Note**: The image with the respective branch tags is published to GHCR only on push actions to the branches in your repository or on tags and not on pull requests).
-  - The action runs automatically on a schedule checking updates to the base image using [Differ](https://github.com/Vanilla-OS/Differ).
-- `.github/workflows/release.yml`: This file contains the GitHub Actions workflow to automatically create a GitHub release when a tag is created and it uploads the generated Containerfile to the release for future reference.
-- `.github/dependabot.yml`: This file contains the configuration for GitHub's Dependabot to check for updates to the GitHub actions used in the workflow files monthly and when it finds a new version it creates a PR in your repository.
-- `includes.container`: The files included in this directory are added by default to your image to the specified location (**Note**: It also contains ABRoot's configuration file).
-- `modules`: This directory contains the modules that are used to customize the image. You can add your modules to this directory.
-- `recipe.yml`: This file contains the recipe for the image. It specifies the base image, modules and other fields to be present in the custom image.
+Das Image für den Hauptbranch wird unter folgender Adresse veröffentlicht:
+
+```text
+ghcr.io/srvb/srvb-os-noctalia:main
+```
+
+## Hinweis zur Verwendung
+
+SRVB OS Noctalia ist eine persönliche Konfiguration in Entwicklung und erhebt
+nicht den Anspruch, eine allgemeingültige Desktop-Distribution zu sein.
+Das Image ist derzeit nicht als vollständiger Desktop für den produktiven
+Einsatz vorgesehen.
+
+Die Verwendung erfolgt auf eigene Gefahr. Vor einem Systemwechsel sollte ein
+Backup wichtiger Daten vorhanden sein. Dieses Image verwendet ABRoot und ist
+nicht für einen Wechsel mit `bootc switch` vorgesehen.
+
+## Lizenz
+
+Der Lizenztext dieses Projekts befindet sich in [LICENSE.txt](LICENSE.txt)
+(GNU General Public License, Version 3).
+
+Die im Image enthaltenen Komponenten und Pakete stammen von Drittanbietern und
+unterliegen ihren jeweiligen Lizenzen. Für diese gelten die Lizenz- und
+Urheberrechtshinweise der jeweiligen Projekte und Pakete.
