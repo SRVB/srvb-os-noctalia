@@ -46,8 +46,8 @@ stages:
         only-arches: [arm64]
     commands:
     - mkdir -p /usr/bin
-    - install -Dm755 /sources/install-vanilla-tools/vanilla-tools/lpkg /usr/bin/lpkg
-    - install -Dm755 /sources/install-vanilla-tools/vanilla-tools/cur-gpu /usr/bin/cur-gpu
+    - install -Dm755 /sources/vanilla-tools/vanilla-tools*/vanilla-tools/lpkg /usr/bin/lpkg
+    - install -Dm755 /sources/vanilla-tools/vanilla-tools*/vanilla-tools/cur-gpu /usr/bin/cur-gpu
 
   - name: example-packages # Sample module using the built-in Apt module to install packages
     type: apt
