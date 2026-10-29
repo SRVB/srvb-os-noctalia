@@ -4,27 +4,50 @@ vibversion: 1.0.7
 
 stages:
 - id: build
-  base: ghcr.io/vanilla-os/core:latest # Optionally, Replace this image URL with a different one i.e. gnome-nvidia:latest, etc
+  base: ghcr.io/vanilla-os/core:latest
   addincludes: true
   singlelayer: false
   labels:
-    maintainer: self-maintained # Optionally, Replace this with your name
+    maintainer: Friesi
   args:
-    DEBIAN_FRONTEND: noninteractive # Set the image environment as non-interactive
-
-  # Commands to run first before building the modules
+    DEBIAN_FRONTEND: noninteractive
   runs:
     commands:
       - echo 'APT::Install-Recommends "1";' > /etc/apt/apt.conf.d/01norecommends
+  cleanup:
+    - /boot/initrd.img*
+    - /tmp/*
+    - /var/cache/apt/pkgcache.bin
+    - /var/cache/debconf
+    - /var/cache/dictionaries-common
+    - /var/cache/fontconfig
+    - /var/cache/ldconfig
+    - /var/cache/man
+    - /var/lib/dbus/machine-id
+    - /var/log/*
 
   modules:
   - name: init-setup
     type: shell
     commands:
-    - lpkg --unlock
-    - apt-get update
+    - apt update
+    - apt clean
 
-  # Put your custom actions below this comment
+  - name: vanilla-tools
+    type: shell
+    sources:
+      - type: tar
+        url: https://github.com/Vanilla-OS/vanilla-tools/releases/download/v1.0.1/vanilla-tools-amd64.tar.gz
+        #checksum: aef32f07820e0993e534e6bccfa1a6daae6c8c6f0543d3e073f4f121f2ef2e31
+        only-arches: [amd64]
+      - type: tar
+        url: https://github.com/Vanilla-OS/vanilla-tools/releases/download/v1.0.1/vanilla-tools-arm64.tar.gz
+        #checksum: e59b098338de6f6071376e07ec79b17be6c8f0a0dd354fab128e1e86a36d0862
+        only-arches: [arm64]
+    commands:
+    - mkdir -p /usr/bin
+    - install -Dm755 /sources/install-vanilla-tools/vanilla-tools/lpkg /usr/bin/lpkg
+    - install -Dm755 /sources/install-vanilla-tools/vanilla-tools/cur-gpu /usr/bin/cur-gpu
 
   - name: example-packages # Sample module using the built-in Apt module to install packages
     type: apt
@@ -56,7 +79,6 @@ stages:
     commands:
     - apt-get autoremove -y
     - apt-get clean
-    - lpkg --lock
 
   - name: cleanup2
     type: shell
